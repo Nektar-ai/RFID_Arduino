@@ -8,8 +8,10 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/School/Cours/Prototypage Données/TEST_EPSI/include",
-                "C:/School/Cours/Prototypage Données/TEST_EPSI/src",
+                "D:/Workspaces/Prototypage_Hardware/include",
+                "D:/Workspaces/Prototypage_Hardware/src",
+                "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/pubsubclient-master/src",
+                "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/cores/esp8266",
@@ -26,7 +28,6 @@
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
-                "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src",
@@ -49,8 +50,10 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/School/Cours/Prototypage Données/TEST_EPSI/include",
-                    "C:/School/Cours/Prototypage Données/TEST_EPSI/src",
+                    "D:/Workspaces/Prototypage_Hardware/include",
+                    "D:/Workspaces/Prototypage_Hardware/src",
+                    "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/pubsubclient-master/src",
+                    "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/cores/esp8266",
@@ -67,7 +70,6 @@
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
-                    "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src",
