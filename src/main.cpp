@@ -1,25 +1,74 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <DHT.h>
+#include <Wire.h>
+#include "LiquidCrystal_PCF8574.h"
+#include <string>
+#include <sstream>
 
 #define LED 15
-#define LED2 2
+#define PHO A0
+#define DHTPIN 2
+#define DHTTYPE DHT11
+#define MOT 12
+
+#define MQTT_PUB_TEMP "EPSI/DHT11/5C:CF:7F:B8:C4:75/TEMP"
+#define MQTT_PUB_HUM "EPSI/DHT11/5C:CF:7F:B8:C4:75/HUM"
+#define MQTT_PUB_LUM "EPSI/GL5516/5C:CF:7F:B8:C4:75"
+#define MQTT_PUB_MOT "EPSI/SR501/5C:CF:7F:B8:C4:75"
 
 WiFiClient WIFI_CLIENT;
 PubSubClient MQTT_CLIENT(WIFI_CLIENT);
+DHT dht(DHTPIN, DHTTYPE);
+LiquidCrystal_PCF8574 lcd(0x27);
 
-void setup() {
-  Serial.begin(115200);
-  
+float temp;
+float hum;
+int lum;
+
+int lcdCols = 16;
+int lcdRows = 2;
+
+float currentTime = millis();
+float lastDataSend;
+float lastMotionDetected;
+bool motionDetected;
+
+// namespace patch
+// {
+//   template <typename T>
+//   std::string to_string(const T &n)
+//   {
+//     std::ostringstream stm;
+//     stm << n;
+//     return stm.str();
+//   }
+// }
+
+void setup()
+{
   pinMode(LED, OUTPUT);
-  pinMode(LED2, OUTPUT);
+  pinMode(DHTPIN, INPUT);
+  pinMode(MOT, INPUT);
+
+  Serial.begin(115200);
+  Wire.begin();
+
+  lcd.begin(16, 2);
+  lcd.init();
+  lcd.setBacklight(LOW);
+  // lcd.setBacklight(HIGH);
+
+  dht.begin();
 
   WiFi.begin("Nek_Wifi_Room", "73967835");
 
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
   }
-
+    // Affichage des données MAC
   Serial.println();
   Serial.print("ESP Board Mac Address : ");
   Serial.println(WiFi.macAddress());
@@ -30,50 +79,163 @@ void setup() {
   Serial.print("Wifi Network Detected : ");
   Serial.println(WiFi.scanNetworks());
 }
+   // Fonction de connexion au broker MQTT
+void reconnect()
+{
+  // Paramétrage de l'adresse et du port du broker MQTT
+  MQTT_CLIENT.setServer("broker.hivemq.com", 1883);
 
-// This function connects to the MQTT broker
-void reconnect() {
-  // Set our MQTT broker address and port
-  MQTT_CLIENT.set_server("broker.hivemq.com", 1883);
-  
-  // Loop until we're reconnected
-  while (!MQTT_CLIENT.connected()) {
-    // Attempt to connect
+  // Boucle qui tourne tant que la connexion au Wifi n'est pas effective
+  while (!MQTT_CLIENT.connected())
+  {
+    // Tentative de connexion
     Serial.println("Attempt to connect to MQTT broker");
     MQTT_CLIENT.connect("esp8266_donlawiliant");
 
-    // Wait some time to space out connection requests
-    delay(3000);
+    // Attente de 2sec entre 2 tentatives de connexion
+    delay(2000);
   }
   Serial.println("MQTT connected");
 }
+int i = 1;
+int j = 1;
 
-void loop() {
-
-    // Check if we're connected to the MQTT broker
-  if (!MQTT_CLIENT.connected()) {
-    // If we're not, attempt to reconnect
+void loop()
+{
+  digitalWrite(LED, HIGH);
+  // Vérification de la connexion au broker MQTT
+  if (!MQTT_CLIENT.connected())
+  {
+    // Si la connexion au broker MQTT n'est pas réussie, on retente en boucle
     reconnect();
   }
-
-  if (MQTT_CLIENT.connect("esp8266_donlawiliant")) {
-    // connection succeeded
-    Serial.println("Connected now subscribing");
-    boolean r= MQTT_CLIENT.subscribe("test");
-
-  } 
-  else {
-    // connection failed
-    // mqttClient.state() will provide more information
-    // on why it failed.
-    Serial.println("Connection failed ");
+    // Relevé de la valeur actuelle des capteurs
+  float dhtTemp = dht.readTemperature();
+  float dhtHum = dht.readHumidity();
+  lum = analogRead(PHO);
+  int motValue = digitalRead(MOT);
+  float lumVout = lum * 0.0048828125;
+  int lumLux = 500 / (10 * ((5 - lumVout) / lumVout));
+  currentTime = millis();
+  if (motValue == HIGH)
+  {
+    motionDetected = true;
+    Serial.println("MOTION DETECTED !");
+    lastMotionDetected = millis();  
+  }
+  else if (lastMotionDetected + 15000 < currentTime)
+  {
+    motionDetected = false;
+    Serial.println("NO MOTION DETECTED..");
   }
 
-  Serial.println("Loop...");
-  digitalWrite(LED, HIGH);
-  digitalWrite(LED2, HIGH);
+  String payloadTempStr = "{\"value\": " + String(dhtTemp) + ", \"unit\" : \"°C\"}";
+  String payloadHumStr = "{\"value\": " + String(dhtHum) + ", \"unit\" : \"%HR\"}";
+  String payloadLumStr = "{\"value\": " + String(lumLux) + ", \"unit\" : \"Lx\"}";
+  String payloadMotStr = "{\"value\": " + String(motionDetected) + "}";
+
+  if ((j % 5 == 1) & (j % 10 != 1))
+  {
+    lcd.clear();
+    lcd.setCursor(1, 0);
+    lcd.print("Tem : " + String(dhtTemp) + " Cel");
+    lcd.setCursor(1, 1);
+    lcd.print("Hum : " + String(dhtHum) + " %HR");
+  }
+  else if (j % 10 == 1)
+  {
+    lcd.clear();
+    lcd.setCursor(1, 0);
+    lcd.print("Lum : " + String(lumLux) + " Lux");
+    lcd.setCursor(1, 1);
+    if (motionDetected == true)
+    {
+      lcd.setBacklight(HIGH);
+      lcd.print("MOTION DETECTED");
+    }
+    else
+    {
+      lcd.setBacklight(LOW);
+      lcd.print("NO MOTION DETECTED");
+    }
+  }
+
+  if (isnan(dhtTemp) || isnan(dhtHum))
+  {
+    Serial.println("Failed to read from DHT sensor!");
+  }
+  else if (isnan(lum))
+  {
+    Serial.println("Failed to read from GL5516 sensor!");
+  }
+
+  boolean rc = MQTT_CLIENT.subscribe(MQTT_PUB_TEMP);
+
+  if (rc & ((lastDataSend + 15000) < currentTime))
+  {
+    Serial.println(String("Valeur payload Temp : ") + payloadTempStr);
+    Serial.println(String("Valeur payload Hum : ") + payloadHumStr);
+    Serial.println(String("Valeur payload Lum : ") + payloadLumStr);
+    Serial.println(String("Valeur payload Mot : ") + payloadMotStr);
+
+    Serial.print(String("Valeur dhtHum : ") + dhtHum + String(" "));
+    Serial.print(String("| Valeur dhtTemp : ") + dhtTemp + " ");
+    Serial.print(String("| Valeur lum : ") + lum + "\n");
+    Serial.print(String("| Valeur lum Lux : ") + lumLux + "\n");
+    Serial.println("Current time :" + String(currentTime));
+
+    if (j > 5)
+    {
+      Serial.println("Subscribed, now Publishing..");
+      MQTT_CLIENT.publish(MQTT_PUB_TEMP, payloadTempStr.c_str());
+      MQTT_CLIENT.publish(MQTT_PUB_HUM, payloadHumStr.c_str());
+      MQTT_CLIENT.publish(MQTT_PUB_LUM, payloadLumStr.c_str());
+      MQTT_CLIENT.publish(MQTT_PUB_MOT, payloadMotStr.c_str());
+
+      lastDataSend = currentTime;
+    }
+    Serial.println("Publish N°" + String(i) + " Done !");
+    i++;
+  }
+
+  j++;
   delay(1000);
   digitalWrite(LED, LOW);
-  digitalWrite(LED2, LOW);
-  delay(1000);
 }
+
+  // byte error, address;
+  // int nDevices;
+  // Serial.println("Scanning...");
+  // nDevices = 0;
+  // for (address = 1; address < 127; address++)
+  // {
+  //   Wire.beginTransmission(address);
+  //   error = Wire.endTransmission();
+  //   if (error == 0)
+  //   {
+  //     Serial.print("I2C device found at address 0x");
+  //     if (address < 16)
+  //     {
+  //       Serial.print("0");
+  //     }
+  //     Serial.println(address, HEX);
+  //     nDevices++;
+  //   }
+  //   else if (error == 4)
+  //   {
+  //     Serial.print("Unknow error at address 0x");
+  //     if (address < 16)
+  //     {
+  //       Serial.print("0");
+  //     }
+  //     Serial.println(address, HEX);
+  //   }
+  // }
+  // if (nDevices == 0)
+  // {
+  //   Serial.println("No I2C devices found\n");
+  // }
+  // else
+  // {
+  //   Serial.println("done\n");
+  // }

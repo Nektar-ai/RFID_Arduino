@@ -10,8 +10,15 @@
             "includePath": [
                 "D:/Workspaces/Prototypage_Hardware/include",
                 "D:/Workspaces/Prototypage_Hardware/src",
-                "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/pubsubclient-master/src",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
+                "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystal_PCF8574/src",
+                "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystal",
+                "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/Wire",
+                "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystal@1.0.7/src",
+                "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystalIO/src",
+                "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/PubSubClient/src",
+                "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/DHT sensor library",
+                "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/Adafruit Unified Sensor",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/cores/esp8266",
@@ -43,8 +50,8 @@
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/SoftwareSerial/src",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/TFT_Touch_Shield_V2",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/Ticker/src",
-                "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/Wire",
                 "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/esp8266/src",
+                "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/pubsubclient-master/src",
                 ""
             ],
             "browse": {
@@ -52,8 +59,15 @@
                 "path": [
                     "D:/Workspaces/Prototypage_Hardware/include",
                     "D:/Workspaces/Prototypage_Hardware/src",
-                    "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/pubsubclient-master/src",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
+                    "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystal_PCF8574/src",
+                    "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystal",
+                    "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/Wire",
+                    "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystal@1.0.7/src",
+                    "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/LiquidCrystalIO/src",
+                    "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/PubSubClient/src",
+                    "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/DHT sensor library",
+                    "D:/Workspaces/Prototypage_Hardware/.pio/libdeps/esp8285/Adafruit Unified Sensor",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/cores/esp8266",
@@ -85,8 +99,8 @@
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/SoftwareSerial/src",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/TFT_Touch_Shield_V2",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/Ticker/src",
-                    "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/Wire",
                     "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/esp8266/src",
+                    "C:/Users/Nektar/.platformio/packages/framework-arduinoespressif8266/libraries/pubsubclient-master/src",
                     ""
                 ]
             },
