@@ -35,17 +35,6 @@ float lastDataSend;
 float lastMotionDetected;
 bool motionDetected;
 
-// namespace patch
-// {
-//   template <typename T>
-//   std::string to_string(const T &n)
-//   {
-//     std::ostringstream stm;
-//     stm << n;
-//     return stm.str();
-//   }
-// }
-
 void setup()
 {
   pinMode(LED, OUTPUT);
@@ -58,7 +47,6 @@ void setup()
   lcd.begin(16, 2);
   lcd.init();
   lcd.setBacklight(LOW);
-  // lcd.setBacklight(HIGH);
 
   dht.begin();
 
@@ -86,13 +74,16 @@ void reconnect()
   MQTT_CLIENT.setServer("broker.hivemq.com", 1883);
 
   // Boucle qui tourne tant que la connexion au Wifi n'est pas effective
+
   while (!MQTT_CLIENT.connected())
   {
     // Tentative de connexion
+
     Serial.println("Attempt to connect to MQTT broker");
     MQTT_CLIENT.connect("esp8266_donlawiliant");
 
     // Attente de 2sec entre 2 tentatives de connexion
+
     delay(2000);
   }
   Serial.println("MQTT connected");
@@ -103,18 +94,29 @@ int j = 1;
 void loop()
 {
   digitalWrite(LED, HIGH);
+
   // Vérification de la connexion au broker MQTT
+
   if (!MQTT_CLIENT.connected())
   {
     // Si la connexion au broker MQTT n'est pas réussie, on retente en boucle
+
     reconnect();
   }
     // Relevé de la valeur actuelle des capteurs
+
   float dhtTemp = dht.readTemperature();
   float dhtHum = dht.readHumidity();
   lum = analogRead(PHO);
   int motValue = digitalRead(MOT);
+
+    // Calcul du voltage à la sortie de la photorésistance
+
   float lumVout = lum * 0.0048828125;
+
+    // Calcul de la valeur en Lux en sortie de la photorésistance, 
+    // en se basant sur l'intensité et l'impédence de la résistance du circuit
+
   int lumLux = 500 / (10 * ((5 - lumVout) / lumVout));
   currentTime = millis();
   if (motValue == HIGH)
@@ -129,10 +131,15 @@ void loop()
     Serial.println("NO MOTION DETECTED..");
   }
 
+    // Préparation des payloads qui seront envoyées au broker MQTT
+
   String payloadTempStr = "{\"value\": " + String(dhtTemp) + ", \"unit\" : \"°C\"}";
   String payloadHumStr = "{\"value\": " + String(dhtHum) + ", \"unit\" : \"%HR\"}";
   String payloadLumStr = "{\"value\": " + String(lumLux) + ", \"unit\" : \"Lx\"}";
   String payloadMotStr = "{\"value\": " + String(motionDetected) + "}";
+
+    // Affichage sur l'écran LCD, les 5 1ères secondes de la température et de l'humidité
+    // Puis pendant les 5 secondes suivantes, de l'intensité lumineuse, ainsi que la détection de mouvement
 
   if ((j % 5 == 1) & (j % 10 != 1))
   {
@@ -148,6 +155,9 @@ void loop()
     lcd.setCursor(1, 0);
     lcd.print("Lum : " + String(lumLux) + " Lux");
     lcd.setCursor(1, 1);
+
+      // Lorsqu'un mouvement est détecté -> illumination de l'écran LCD
+
     if (motionDetected == true)
     {
       lcd.setBacklight(HIGH);
@@ -159,6 +169,7 @@ void loop()
       lcd.print("NO MOTION DETECTED");
     }
   }
+      // Si aucun valeur n'est relevé par les capteurs, on informe sur le moniteur serie
 
   if (isnan(dhtTemp) || isnan(dhtHum))
   {
@@ -171,6 +182,8 @@ void loop()
 
   boolean rc = MQTT_CLIENT.subscribe(MQTT_PUB_TEMP);
 
+      // Publication des données toutes les 15 sec. vers le broker MQTT
+
   if (rc & ((lastDataSend + 15000) < currentTime))
   {
     Serial.println(String("Valeur payload Temp : ") + payloadTempStr);
@@ -178,11 +191,9 @@ void loop()
     Serial.println(String("Valeur payload Lum : ") + payloadLumStr);
     Serial.println(String("Valeur payload Mot : ") + payloadMotStr);
 
-    Serial.print(String("Valeur dhtHum : ") + dhtHum + String(" "));
-    Serial.print(String("| Valeur dhtTemp : ") + dhtTemp + " ");
-    Serial.print(String("| Valeur lum : ") + lum + "\n");
-    Serial.print(String("| Valeur lum Lux : ") + lumLux + "\n");
     Serial.println("Current time :" + String(currentTime));
+
+      // Envoi des données au broker MQTT ~5 secondes après le boot du MCU
 
     if (j > 5)
     {
@@ -202,6 +213,8 @@ void loop()
   delay(1000);
   digitalWrite(LED, LOW);
 }
+
+    // Code permettant la détection de l'adresse, en hexadécimal, de l'afficheur LCD
 
   // byte error, address;
   // int nDevices;
